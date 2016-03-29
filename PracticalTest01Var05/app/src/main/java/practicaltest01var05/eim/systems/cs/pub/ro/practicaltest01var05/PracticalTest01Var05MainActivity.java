@@ -1,6 +1,9 @@
 package practicaltest01var05.eim.systems.cs.pub.ro.practicaltest01var05;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -52,6 +55,12 @@ public class PracticalTest01Var05MainActivity extends AppCompatActivity {
                 counter++;
                 //Toast.makeText(this, "Activity returned with result " + counter, Toast.LENGTH_LONG).show();
             }
+            String text = textView.getText().toString();
+            if (text.contains("N") && text.contains("S") && text.contains("E")&& text.contains("W")) {
+                Intent intent = new Intent(getApplicationContext(), PracticalTest01Var05Service.class);
+                intent.putExtra("seq", text);
+                getApplicationContext().startService(intent);
+            }
         }
     }
 
@@ -66,6 +75,18 @@ public class PracticalTest01Var05MainActivity extends AppCompatActivity {
         if (savedInstanceState.containsKey("counter"))
             this.counter = savedInstanceState.getInt("counter");
         Log.d("COUNTER", "counter is: " + counter);
+    }
+
+    private IntentFilter intentFilter = new IntentFilter();
+    private MessageBroadcastReceiver messageBroadcastReceiver = new MessageBroadcastReceiver();
+    private class MessageBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("[Message]", intent.getStringExtra("message"));
+            String mess = intent.getStringExtra("message");
+            Toast.makeText(getApplicationContext(), "Activity returned with result " + mess, Toast.LENGTH_LONG).show();
+
+        }
     }
 
     @Override
@@ -87,6 +108,8 @@ public class PracticalTest01Var05MainActivity extends AppCompatActivity {
         eButton.setOnClickListener(myListener);
         sButton.setOnClickListener(myListener);
         secondButton.setOnClickListener(myListener);
+
+        intentFilter.addAction("ANACTION");
     }
 
     @Override
@@ -94,5 +117,24 @@ public class PracticalTest01Var05MainActivity extends AppCompatActivity {
         if (requestCode == SECONDARY_ACTIVITY_REQUEST_CODE) {
             Toast.makeText(this, "Activity returned with result " + resultCode, Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(messageBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(messageBroadcastReceiver);
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Intent intent = new Intent(this, PracticalTest01Var05SecondaryActivity.class);
+        stopService(intent);
+        super.onDestroy();
     }
 }
