@@ -1,5 +1,6 @@
 package practicaltest01var05.eim.systems.cs.pub.ro.practicaltest01var05;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,11 +22,17 @@ public class PracticalTest01Var05MainActivity extends AppCompatActivity {
 
     private int counter = 0;
 
+    private static final int SECONDARY_ACTIVITY_REQUEST_CODE = 1;
+
     private class MyListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.second_button) {
-
+                Intent intent = new Intent(getApplicationContext(), PracticalTest01Var05SecondaryActivity.class);
+                String seq = textView.getText().toString();
+                intent.putExtra("counter", counter);
+                intent.putExtra("seq", seq);
+                startActivityForResult(intent, SECONDARY_ACTIVITY_REQUEST_CODE);
             }
             else {
                 switch (v.getId()) {
@@ -80,5 +87,12 @@ public class PracticalTest01Var05MainActivity extends AppCompatActivity {
         eButton.setOnClickListener(myListener);
         sButton.setOnClickListener(myListener);
         secondButton.setOnClickListener(myListener);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == SECONDARY_ACTIVITY_REQUEST_CODE) {
+            Toast.makeText(this, "Activity returned with result " + resultCode, Toast.LENGTH_LONG).show();
+        }
     }
 }

@@ -5,5 +5,8 @@
     <string name="e">E</string>
     <string name="s">S</string>
     <string name="second">Second</string>
+    <string name="cancel_text">Cancel</string>
+    <string name="register_text">Register</string>
+
 </resources>
 
